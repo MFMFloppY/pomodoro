@@ -1,6 +1,6 @@
 from sqlalchemy import select, delete, update
 from sqlalchemy.orm import Session
-from database.table_models import Tasks, Categories
+from db_models import Tasks, Categories
 
 from models.task_model import TaskSchema
 
