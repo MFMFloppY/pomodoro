@@ -9,7 +9,7 @@ class TaskService:
         self.task_cache = task_cache
 
 
-    def get_tasks(self):
+    def get_tasks(self) -> list[TaskSchema]:
 
         if cache_task := self.task_cache.get_tasks():
             return cache_task
