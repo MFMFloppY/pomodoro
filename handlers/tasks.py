@@ -2,7 +2,7 @@ from fastapi import APIRouter, status, Depends
 from models.task_model import TaskSchema
 from typing import Annotated
 from repository import TaskRepository
-from dependecy import get_tasks_repo, get_tasks_service
+from dependecy import get_tasks_repo, get_tasks_service, get_request_user_id
 from service import TaskService
 
 
@@ -25,7 +25,7 @@ def Get_all_tasks(task_service: Annotated[TaskService, Depends(get_tasks_service
         status_code=status.HTTP_201_CREATED
         )
 
-def Create_new_task(new_task: TaskSchema, task_repository: Annotated[TaskRepository, Depends(get_tasks_repo)]):
+def Create_new_task(new_task: TaskSchema, task_repository: Annotated[TaskRepository, Depends(get_tasks_repo)], user_id: int = Depends(get_request_user_id)):
     """Создает новую задачу."""
     
     taskid = task_repository.create_task(new_task)
