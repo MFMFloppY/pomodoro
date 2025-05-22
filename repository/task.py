@@ -2,7 +2,7 @@ from sqlalchemy import select, delete, update
 from sqlalchemy.orm import Session
 from db_models import Tasks, Categories
 
-from models.task_model import TaskSchema
+from models.task_model import TaskCreateSchema
 
 
 
@@ -27,18 +27,24 @@ class TaskRepository:
 
             return task
 
+    def get_user_task(self, task_id: int, user_id: int) -> Tasks | None:
+        query = select(Tasks).where(Tasks.task_id == task_id, Tasks.user_id == user_id)
+        with self.db_session() as session:
+            task: Tasks = session.execute(query).scalar_one_or_none()
+            return task
 
-    def create_task(self, task: TaskSchema) -> None:
-        task_model = Tasks(name = task.name, pomodoro_count = task.pomodoro_count, category_id = task.category_id)
+
+    def create_task(self, task: TaskCreateSchema, user_id: int) -> None:
+        task_model = Tasks(name = task.name, pomodoro_count = task.pomodoro_count, category_id = task.category_id, user_id = user_id)
         with self.db_session() as session:
             session.add(task_model)
             session.commit()
             return task_model.task_id
 
     
-    def delete_task(self, task_id: int) -> None:
+    def delete_task(self, task_id: int, user_id: int) -> None:
         with self.db_session() as session:
-            session.execute(delete(Tasks).where(Tasks.task_id == task_id))
+            session.execute(delete(Tasks).where(Tasks.task_id == task_id, Tasks.user_id == user_id))
             session.commit()
     
     
@@ -50,8 +56,8 @@ class TaskRepository:
             return tasks
     
 
-    def update_task(self, task_id: int, name: str, pomodoro_count: int, category_id: int) -> Tasks:
-        query = update(Tasks).where(Tasks.task_id == task_id).values(name = name, pomodoro_count = pomodoro_count, category_id = category_id).returning(Tasks.task_id)
+    def update_task_name(self, task_id: int, name: str) -> Tasks:
+        query = update(Tasks).where(Tasks.task_id == task_id).values(name = name).returning(Tasks.task_id)
         with self.db_session() as session:
             updated_tasks_id: int = session.execute(query).scalar_one_or_none()
             session.commit()
