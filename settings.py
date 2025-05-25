@@ -14,7 +14,17 @@ class Settings(BaseSettings):
     CACHE_DB: int = 0
     JWT_SECRET_KEY: str = "secret_key"
     JWT_ENCODE_ALGORHYTM: str = "HS256"
+    GOOGLE_CLIENT_ID: str = "706308476866-c8022qlad4p84194jm18rbc3trlhufdg.apps.googleusercontent.com"
+    GOOGLE_CLIENT_SECRET_KEY: str = "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"
+    GOOGLE_REDIRECT_URI: str = "http://127.0.0.1:8000/auth/google"
+    GOOGLE_TOKEN_URL: str = "https://accounts.google.com/o/oauth2/token"
+
 
     @property
-    def db_url(self):
+    def db_url(self) -> str:
         return f"{self.DB_DRIVER}://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+
+    
+    @property
+    def google_redirect_url(self) -> str:
+        return f"https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={self.GOOGLE_CLIENT_ID}&redirect_uri={self.GOOGLE_REDIRECT_URI}&scope=openid%20profile%20email&access_type=offline"

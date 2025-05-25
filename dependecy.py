@@ -6,6 +6,7 @@ from service import TaskService, UserService, AuthService
 from sqlalchemy.orm import Session
 from settings import Settings
 from exeption import TokenExpiredError, TokenNotCorrectException
+from client import GoogleClient
 
 
 
@@ -33,8 +34,14 @@ def get_user_repository(db_session: Session = Depends(get_db_session)) -> UserRe
     return UserRepository(db_session=db_session)
 
 
-def get_auth_service(user_repository: UserRepository = Depends(get_user_repository)) -> AuthService:
-    return AuthService(user_repository=user_repository, settings=Settings())
+
+def get_google_client() -> GoogleClient:
+    return GoogleClient(settings=Settings())
+
+
+def get_auth_service(user_repository: UserRepository = Depends(get_user_repository),
+                     google_client: GoogleClient = Depends(get_google_client)) -> AuthService:
+    return AuthService(user_repository=user_repository, settings=Settings(), google_client = google_client)
 
 
 def get_user_service(
@@ -59,3 +66,4 @@ def get_request_user_id(auth_service: AuthService = Depends(get_auth_service),
         raise HTTPException(status_code=403, detail = e.detail)
 
     return user_id
+
