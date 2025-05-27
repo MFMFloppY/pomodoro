@@ -2,6 +2,7 @@
 
 APP = app
 MAIN = main
+ENV_FILE = ./.main.env
 
 
 clean: 
