@@ -15,10 +15,10 @@ router = APIRouter(prefix="/tasks)",tags=["tasks"])
         response_model=list[TaskSchema]
         )
 
-def Get_all_tasks(task_service: Annotated[TaskService, Depends(get_tasks_service)]):
+async def Get_all_tasks(task_service: Annotated[TaskService, Depends(get_tasks_service)]):
     """Возвращает список задач."""
 
-    return task_service.get_tasks()
+    return await task_service.get_tasks()
 
 @router.post(
         "/create_task",
@@ -26,12 +26,12 @@ def Get_all_tasks(task_service: Annotated[TaskService, Depends(get_tasks_service
         status_code=status.HTTP_201_CREATED
         )
 
-def Create_new_task(body: TaskCreateSchema,
+async def Create_new_task(body: TaskCreateSchema,
                     task_service: Annotated[TaskService, Depends(get_tasks_service)],
                     user_id: int = Depends(get_request_user_id)):
     """Создает новую задачу."""
     
-    new_task = task_service.create_task(body, user_id)
+    new_task = await task_service.create_task(body, user_id)
     return new_task
 
 
@@ -40,14 +40,14 @@ def Create_new_task(body: TaskCreateSchema,
     status_code=status.HTTP_202_ACCEPTED
     )
 
-def Update_task(task_id: int, 
+async def Update_task(task_id: int, 
                 name: str, 
                 task_service: Annotated[TaskService, Depends(get_tasks_service)],
                 user_id: int = Depends(get_request_user_id)
                 ):
     """Обновляет параметры текущей задачи."""
     try:
-        return task_service.update_task_name(task_id=task_id, name=name, user_id=user_id)
+        return await task_service.update_task_name(task_id=task_id, name=name, user_id=user_id)
     except TaskNotFound as e:
         raise HTTPException(status_code=404, detail=e.detail)
     
@@ -56,13 +56,13 @@ def Update_task(task_id: int,
     "/delete_task"
     )
 
-def delete_task(task_id: int,
+async def delete_task(task_id: int,
                  task_service: Annotated[TaskRepository, Depends(get_tasks_service)],
                  user_id: int = Depends(get_request_user_id)):
     """Удаляет задачу с заданным id."""
 
     try:
-        task_service.delete_task(task_id=task_id, user_id=user_id)
+        await task_service.delete_task(task_id=task_id, user_id=user_id)
         return f"Task {task_id} sucsessfully deleted."
     except TaskNotFound as e:
         raise HTTPException(status_code=404, detail=e.detail)
