@@ -12,3 +12,6 @@ class TokenNotCorrectException(Exception):
 
 class TaskNotFound(Exception):
     detail = "Task not found"
+
+class AccessToTaskDenied(Exception):
+    detail = "Хуй тебе а не чужие таски менять!"
