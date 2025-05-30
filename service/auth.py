@@ -68,14 +68,14 @@ class AuthService:
 
 
 
-    def login(self, username: str, password: str) -> UserLoginSchema:
-        user = self.user_repository.get_user_by_username(username)
-        self.validate_auth_user(user, password)
+    async def login(self, username: str, password: str) -> UserLoginSchema:
+        user = await self.user_repository.get_user_by_username(username)
+        await self.validate_auth_user(user, password)
         access_token = self.generate_access_token(user_id = user.id)
         return UserLoginSchema(user_id=user.id, access_token=access_token)
     
     @staticmethod
-    def validate_auth_user(user: UserProfile, password: str):
+    async def validate_auth_user(user: UserProfile, password: str):
         if not user:
             raise UserNotFoundException
         if user.password != password:

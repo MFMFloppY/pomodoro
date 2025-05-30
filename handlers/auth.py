@@ -1,26 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from typing import Annotated
-from models import UserCreateSchema, UserLoginSchema
 from service import AuthService
 from dependecy import get_auth_service
-from exeption import UserNotCorrectPasswordException, UserNotFoundException
 from fastapi.responses import RedirectResponse
 
-router = APIRouter(prefix="/auth", tags=["auth"])
 
+router = APIRouter(prefix="/auth", tags=["OAuth2 authorization"])
 
-@router.post("/login", response_model=UserLoginSchema)
-async def login(body:UserCreateSchema, auth_service: Annotated[AuthService, Depends(get_auth_service)]):
-    
-    try:
-        return await auth_service.login(body.username, body.password)
-         
-    except UserNotFoundException as e:
-        raise HTTPException(status_code=404, detail=e.detail)
-    
-    except UserNotCorrectPasswordException as e:
-        raise HTTPException(status_code=401, detail=e.detail)
-    
 
 @router.get("/login/google", response_class=RedirectResponse)
 async def google_login(auth_service: Annotated[AuthService, Depends(get_auth_service)]):
