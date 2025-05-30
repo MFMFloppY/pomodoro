@@ -7,7 +7,7 @@ from service import TaskService
 from exeption import TaskNotFound
 
 
-router = APIRouter(prefix="/tasks)",tags=["tasks"])
+router = APIRouter(prefix="/tasks)",tags=["Tasks"])
 
 
 @router.get(

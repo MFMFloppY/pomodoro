@@ -44,4 +44,17 @@ class UserRepository:
             return (await session.execute(query)).scalar_one_or_none()
         
 
+    async def create_not_oauth_user(self, username: str, password: str) -> UserProfile:
+        
+        query = insert(UserProfile).values(
+            username=username, 
+            password=password).returning(UserProfile.id)
+        
+        
+        async with self.db_session as session:
+            user_id: int = (await session.execute(query)).scalar()
+            await session.commit()
+            await session.flush()
+            return await self.get_user(user_id)
+
             
